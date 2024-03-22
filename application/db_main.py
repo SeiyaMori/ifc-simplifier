@@ -2,17 +2,24 @@
 
 # Test db functionality
 
-from application.db_controller import DBController
+import ifcopenshell
+from db_controller import DBController
 from db_path import DB_PATH
+
 
 def main():
     controller = DBController(DB_PATH)
-    #new_project = ('New cool App with SQLite & Python', '2015-01-01', '2015-01-30');
-    #project_id = controller.create(new_project)
-    #update_project = ('Updated', '2024-03-22', '2024-04-01', 4)
-    #controller.update(update_project)
-    #controller.delete(1)
-    #controller.delete_all()
+
+    # Delete all elements in db
+    controller.delete_all()
+    print("All elements deleted.")
+
+    # Create new elements in db
+    file = ifcopenshell.open("example_building.ifc")
+    ifc_elements = file.by_type("IfcBuildingElement")
+    for e in ifc_elements:
+        info = e.get_info()
+        controller.create((info["id"], info["Name"], info["type"], False))
 
 if __name__ == "__main__":
     main()

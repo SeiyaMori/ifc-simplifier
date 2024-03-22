@@ -41,6 +41,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(400, 300))
         self.setMaximumSize(QSize(1000,700))
 
+
         # Add button
 
         # Menu action

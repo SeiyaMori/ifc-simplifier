@@ -37,8 +37,8 @@ class DBController:
         :return: item id
         """
         with self.conn:  # type: ignore
-            sql = ''' INSERT INTO elements(ifc_id,name,type)
-                    VALUES(?,?,?) '''
+            sql = ''' INSERT INTO elements(ifc_id,name,type,exclude)
+                    VALUES(?,?,?,?) '''
             cur = self.conn.cursor()  # type: ignore
             cur.execute(sql, item)
             self.conn.commit()  # type: ignore
@@ -54,7 +54,8 @@ class DBController:
             sql = ''' UPDATE elements
                     SET ifc_id = ? ,
                         name = ? ,
-                        type = ?
+                        type = ? ,
+                        exlude = ?
                     WHERE id = ?'''
             cur = self.conn.cursor()  # type: ignore
             cur.execute(sql, item)

@@ -42,7 +42,8 @@ def main():
                                         id integer PRIMARY KEY,
                                         ifc_id integer,
                                         name text NOT NULL,
-                                        type text
+                                        type text,
+                                        exclude boolean
                                     ); """
     
     sql_create_planes_table = """ CREATE TABLE IF NOT EXISTS planes (
