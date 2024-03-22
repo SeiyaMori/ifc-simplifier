@@ -60,8 +60,9 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.setWindowTitle("My App")
         self.setMinimumSize(QSize(800, 600))
-        self.setMaximumSize(QSize(1200,900))
+        #self.setMaximumSize(QSize(1200,900))
 
         self._table_view = QTableView(self)
         #self._table_view.setItemDelegate(ReadOnlyDelegate())
@@ -97,7 +98,9 @@ class MainWindow(QMainWindow):
             else:
                 print("Failed to select data from the table")
             
-            
+            # Set row height
+            for i in range(self.model.rowCount()):
+                self._table_view.setRowHeight(i, 20)
 
         else:
             print("Failed to connect to the database")
