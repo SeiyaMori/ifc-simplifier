@@ -1,8 +1,8 @@
 # main.py
 
 import sys
-from PyQt6.QtCore import QSize, Qt, QEvent
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QTableView, QStyledItemDelegate, QItemDelegate, QVBoxLayout, QComboBox, QLabel
+from PyQt6.QtCore import QSize, Qt, QEvent, QSortFilterProxyModel
+from PyQt6.QtWidgets import QLineEdit, QApplication, QMainWindow, QWidget, QTableView, QStyledItemDelegate, QItemDelegate, QVBoxLayout, QComboBox, QLabel
 from PyQt6.QtSql import QSqlDatabase, QSqlTableModel
 
 
@@ -93,15 +93,24 @@ class MainWindow(QMainWindow):
             # Edit strategy
             self.model.setEditStrategy(QSqlTableModel.EditStrategy.OnFieldChange)
 
+            # Filter proxy model
+            self.proxy_model = QSortFilterProxyModel()
+            self.proxy_model.setFilterKeyColumn(-1)
+            self.proxy_model.setSourceModel(self.model)
+            self.proxy_model.sort(0, Qt.SortOrder.AscendingOrder)
+
 
             if self.model.select():
-                self._table_view.setModel(self.model)
+                self._table_view.setModel(self.proxy_model)
             else:
                 print("Failed to select data from the table")
             
             # Set row height
             for i in range(self.model.rowCount()):
                 self._table_view.setRowHeight(i, 20)
+            
+            
+
 
         else:
             print("Failed to connect to the database")
@@ -113,9 +122,9 @@ class MainWindow(QMainWindow):
         self.filter_label.setFont(font)
         self.filter_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        # Filter dropdown combobox
-        self.filter_combobox = QComboBox()
-        self.filter_combobox.addItems(["One", "Two", "Three"])
+        # Search bar
+        self.searchbar = QLineEdit()
+        self.searchbar.textChanged.connect(self.proxy_model.setFilterFixedString)
 
         # Table label
         self.table_label = QLabel("Elements")
@@ -124,11 +133,10 @@ class MainWindow(QMainWindow):
         self.table_label.setFont(font)
         self.table_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        
         # Layout
         layout = QVBoxLayout()
         layout.addWidget(self.filter_label)
-        layout.addWidget(self.filter_combobox)
+        layout.addWidget(self.searchbar)
         layout.addWidget(self.table_label)
         layout.addWidget(self._table_view)
 

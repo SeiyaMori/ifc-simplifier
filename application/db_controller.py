@@ -85,3 +85,39 @@ class DBController:
             cur = self.conn.cursor()  # type: ignore
             cur.execute(sql)
             self.conn.commit()  # type: ignore
+
+    def select_all(self):
+        """
+        Select all rows in the table
+        :param conn: Connection to the SQLite database
+        :return:
+        """
+        with self.conn:  # type: ignore
+            sql = "SELECT * FROM elements"
+            cur = self.conn.cursor()  # type: ignore
+            cur.execute(sql)
+        return cur.fetchall()
+
+    def select_by_type(self, type):
+        """
+        Select row by type
+        :param conn: Connection to the SQLite database
+        :return:
+        """
+        with self.conn:  # type: ignore
+            sql = "SELECT * FROM elements WHERE type=?"
+            cur = self.conn.cursor()  # type: ignore
+            cur.execute(sql, (type,))
+        return cur.fetchall()
+
+    def select_distinct_types(self):
+        """
+        Select distinct value from the type column in the elements table
+        :param conn: Connection to the SQLite database
+        :return:
+        """
+        with self.conn:  # type: ignore
+            sql = "SELECT DISTINCT type FROM elements"
+            cur = self.conn.cursor()  # type: ignore
+            cur.execute(sql)
+        return cur.fetchall()
