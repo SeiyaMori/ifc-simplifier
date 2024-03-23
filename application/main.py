@@ -1,8 +1,8 @@
 # main.py
 
 import sys
-from PyQt6.QtCore import QSize, Qt, QAbstractTableModel, QModelIndex, QEvent
-from PyQt6.QtWidgets import QApplication, QMainWindow, QStyleOptionViewItem, QTableView, QStyledItemDelegate, QItemDelegate, QCheckBox
+from PyQt6.QtCore import QSize, Qt, QEvent
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QTableView, QStyledItemDelegate, QItemDelegate, QVBoxLayout, QComboBox, QLabel
 from PyQt6.QtSql import QSqlDatabase, QSqlTableModel
 
 
@@ -72,13 +72,14 @@ class MainWindow(QMainWindow):
         #self._table_view.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self._table_view.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         self._table_view.setItemDelegateForColumn(4, CheckBoxDelegate())
-        self.setCentralWidget(self._table_view)
+        #self.setCentralWidget(self._table_view)
 
         self.db = QSqlDatabase.addDatabase("QSQLITE")  
         #self.db.setHostName("127.0.0.1")
         self.db.setDatabaseName("sqlite.db")
         #self.db.setUserName("root")
         #self.db.setPassword("1234")
+
 
         if self.db.open():
             print("Connected to the database")
@@ -104,6 +105,36 @@ class MainWindow(QMainWindow):
 
         else:
             print("Failed to connect to the database")
+
+        # Filter dropdown label
+        self.filter_label = QLabel("Filter Elements by type")
+        font = self.filter_label.font()
+        font.setPointSize(12)
+        self.filter_label.setFont(font)
+        self.filter_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+
+        # Filter dropdown combobox
+        self.filter_combobox = QComboBox()
+        self.filter_combobox.addItems(["One", "Two", "Three"])
+
+        # Table label
+        self.table_label = QLabel("Elements")
+        font = self.table_label.font()
+        font.setPointSize(12)
+        self.table_label.setFont(font)
+        self.table_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+
+        
+        # Layout
+        layout = QVBoxLayout()
+        layout.addWidget(self.filter_label)
+        layout.addWidget(self.filter_combobox)
+        layout.addWidget(self.table_label)
+        layout.addWidget(self._table_view)
+
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
