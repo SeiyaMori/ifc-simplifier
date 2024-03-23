@@ -2,7 +2,7 @@
 
 import sys
 from PyQt6.QtCore import QSize, Qt, QEvent, QSortFilterProxyModel
-from PyQt6.QtWidgets import QPushButton, QLineEdit, QApplication, QMainWindow, QWidget, QTableView, QStyledItemDelegate, QItemDelegate, QHBoxLayout, QVBoxLayout, QComboBox, QLabel
+from PyQt6.QtWidgets import QPushButton, QLineEdit, QApplication, QMainWindow, QWidget, QTableView, QStyledItemDelegate, QItemDelegate, QGridLayout, QVBoxLayout, QComboBox, QLabel
 from PyQt6.QtSql import QSqlDatabase, QSqlTableModel
 
 
@@ -124,8 +124,6 @@ class MainWindow(QMainWindow):
         self.filter_label.setFont(font)
         self.filter_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        
-
         # Filter settings button
         self.filter_button = QPushButton(text="Filter settings", parent=self)
         self.filter_button.clicked.connect(self.show_new_window)
@@ -135,6 +133,10 @@ class MainWindow(QMainWindow):
         self.searchbar.setPlaceholderText("Search entire table")
         self.searchbar.textChanged.connect(self.proxy_model.setFilterFixedString)
 
+        # Table controls
+        self.table_controls = QGridLayout()
+        self.table_controls.addWidget(self.filter_button, 0, 0)
+        self.table_controls.addWidget(self.searchbar, 0, 1)
 
         # Table label
         self.table_label = QLabel("Elements")
@@ -146,7 +148,7 @@ class MainWindow(QMainWindow):
         # Layout
         layout = QVBoxLayout()
         layout.addWidget(self.filter_label)
-        layout.addWidget(self.filter_button)
+        layout.addLayout(self.table_controls)
         layout.addWidget(self.searchbar)
         layout.addWidget(self.table_label)
         layout.addWidget(self._table_view)
