@@ -2,7 +2,7 @@
 
 import sys
 from PyQt6.QtCore import QSize, Qt, QEvent, QSortFilterProxyModel
-from PyQt6.QtWidgets import QLineEdit, QApplication, QMainWindow, QWidget, QTableView, QStyledItemDelegate, QItemDelegate, QVBoxLayout, QComboBox, QLabel
+from PyQt6.QtWidgets import QPushButton, QLineEdit, QApplication, QMainWindow, QWidget, QTableView, QStyledItemDelegate, QItemDelegate, QHBoxLayout, QVBoxLayout, QComboBox, QLabel
 from PyQt6.QtSql import QSqlDatabase, QSqlTableModel
 
 
@@ -60,6 +60,8 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.w = None  # No external window yet.
+
         self.setWindowTitle("My App")
         self.setMinimumSize(QSize(800, 600))
         #self.setMaximumSize(QSize(1200,900))
@@ -116,15 +118,23 @@ class MainWindow(QMainWindow):
             print("Failed to connect to the database")
 
         # Filter dropdown label
-        self.filter_label = QLabel("Filter Elements by type")
+        self.filter_label = QLabel("Filter controls")
         font = self.filter_label.font()
         font.setPointSize(12)
         self.filter_label.setFont(font)
         self.filter_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
+        
+
+        # Filter settings button
+        self.filter_button = QPushButton(text="Filter settings", parent=self)
+        self.filter_button.clicked.connect(self.show_new_window)
+
         # Search bar
         self.searchbar = QLineEdit()
+        self.searchbar.setPlaceholderText("Search entire table")
         self.searchbar.textChanged.connect(self.proxy_model.setFilterFixedString)
+
 
         # Table label
         self.table_label = QLabel("Elements")
@@ -136,6 +146,7 @@ class MainWindow(QMainWindow):
         # Layout
         layout = QVBoxLayout()
         layout.addWidget(self.filter_label)
+        layout.addWidget(self.filter_button)
         layout.addWidget(self.searchbar)
         layout.addWidget(self.table_label)
         layout.addWidget(self._table_view)
@@ -143,6 +154,25 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+    
+    def show_new_window(self, checked):
+        if self.w is None:
+            self.w = AnotherWindow()
+        self.w.show()
+
+
+class AnotherWindow(QWidget):
+    """
+    This "window" is a QWidget. If it has no parent, it
+    will appear as a free-floating window as we want.
+    """
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Another Window")
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
